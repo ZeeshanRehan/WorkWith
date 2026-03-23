@@ -62,4 +62,40 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+router.get("/:groupId", authMiddleware, async (req: Request, res: Response) => {
+  if (!req.userId) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+
+  const { groupId } = req.params;
+
+  if (!groupId) {
+    return res.status(400).json({
+      success: false,
+      message: "groupId is required",
+    });
+  }
+
+  try {
+    const entries = await Entry.find({ groupId })
+      .sort({ date: -1, createdAt: -1 })
+      .populate("userId", "name");
+
+    return res.status(200).json({
+      success: true,
+      entries,
+    });
+  } catch (error) {
+    console.error("Fetch entries failed", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 export default router;
