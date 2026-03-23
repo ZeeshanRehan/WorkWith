@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type LoginForm = {
   email: string;
@@ -7,6 +7,7 @@ type LoginForm = {
 };
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginForm>({
     email: "",
     password: "",
@@ -43,6 +44,7 @@ function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
+      navigate("/group");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
